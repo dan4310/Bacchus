@@ -17,6 +17,7 @@ namespace bacchus {
         void handle_event(Event& event);
         void push_layer(Layer* layer);
         void push_overlay(Layer* overlay);
-        void shutdown() { _is_running = false; }
+        inline void shutdown() { _is_running = false; }
+        inline Window* get_window() { return _window; }
     };
 }

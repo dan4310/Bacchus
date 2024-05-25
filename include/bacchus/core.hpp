@@ -3,6 +3,10 @@
 #include <inttypes.h>
 #include <functional>
 
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 #if defined(BA_ENABLE_DEBUG)
 #define BA_ENABLE_LOGS
 #define BA_ENABLE_ASSERTS

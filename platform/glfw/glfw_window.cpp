@@ -86,6 +86,8 @@ namespace bacchus {
         glfwSetMouseButtonCallback(_window, mouse_button_callback);
         glfwSetCursorPosCallback(_window, cursor_pos_callback);
         glfwSetWindowSizeCallback(_window, window_size_callback);
+
+        _context = Context::create(_window);
     }
 
     GlfwWindow::~GlfwWindow() {
@@ -99,6 +101,7 @@ namespace bacchus {
     }
 
     void GlfwWindow::update() {
+        _context->swap();
         glfwPollEvents();
     }
 

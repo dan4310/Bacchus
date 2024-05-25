@@ -1,4 +1,5 @@
 #include "bacchus/app.hpp"
+#include "bacchus/renderer/renderer.hpp"
 
 namespace bacchus {
     App* App::_INSTANCE = nullptr;
@@ -10,6 +11,7 @@ namespace bacchus {
 
     App::App() {
         BA_CORE_ASSERT(_INSTANCE == nullptr, "App already created!");
+        Renderer::create();
         _window = Window::create();
         _window->set_event_handler(BA_BIND_EVENT_FN(handle_event));
         _INSTANCE = this;
@@ -17,10 +19,13 @@ namespace bacchus {
 
     App::~App() {
         delete _window;
+        Renderer::shutdown();
     }
 
     void App::run() {
         while (_is_running) {
+            for (auto layer : _layer_stack)
+                layer->update();
             _window->update();
         }
     }
