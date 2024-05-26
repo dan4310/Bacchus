@@ -31,6 +31,6 @@ endif()
 
 add_library(bacchus ${BACCHUS_LIBRARY_TYPE} ${BACCHUS_SRC} ${GLFW_SRC} ${OPENGL_SRC})
 target_include_directories(bacchus PUBLIC include PRIVATE platform)
-target_link_libraries(bacchus spdlog glm glfw glew)
+target_link_libraries(bacchus spdlog glm glfw)
 
 add_subdirectory(test)

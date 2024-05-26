@@ -14,4 +14,8 @@ namespace bacchus {
     void OpenGlRendererApi::set_viewport(uint32_t width, uint32_t height) {
         glViewport(0, 0, width, height);
     }
+
+    void OpenGlRendererApi::draw_indexed(uint32_t count) const {
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+    }
 }

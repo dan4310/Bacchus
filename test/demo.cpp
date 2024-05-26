@@ -1,11 +1,11 @@
-
-#include <GL/glew.h>
 #include <iostream>
 #include "bacchus/app.hpp"
 #include "bacchus/events/key_event.hpp"
+#include "bacchus/renderer/buffer.hpp"
 #include "bacchus/renderer/render_command.hpp"
 #include "bacchus/renderer/shader.hpp"
 #include "bacchus/renderer/shader_program.hpp"
+#include "bacchus/renderer/vertex_array.hpp"
 
 using namespace bacchus;
 
@@ -17,6 +17,10 @@ static const Vertex vertices[3] = {
     { { 0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
     { { 0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
     { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+};
+
+static uint32_t indices[3] = {
+    0, 1, 2
 };
 
 static const char* vert_shader_src = "#version 430\n"
@@ -37,7 +41,9 @@ static const char* frag_shader_src = "#version 430\n"
 
 struct DemoLayer : Layer {
     ShaderProgram* _program;
-    GLuint _vertex_array, _vertex_buffer;
+    VertexArray* _vertex_array;
+    VertexBuffer* _vertex_buffer;
+    IndexBuffer* _index_buffer;
     DemoLayer() : Layer("Demo Layer") {}
 
     virtual void attach() override {
@@ -47,36 +53,35 @@ struct DemoLayer : Layer {
             Shader::create(vert_shader_src, ShaderType::VERTEX),
             Shader::create(frag_shader_src, ShaderType::FRAGMENT),
         });
+        _vertex_array = VertexArray::create();
+        _vertex_buffer = VertexBuffer::create(vertices, sizeof(vertices));
+        _index_buffer = IndexBuffer::create(indices, sizeof(indices));
+        _vertex_buffer->set_layout(BufferLayout({
+            BufferElement(DataType::FLOAT3),
+            BufferElement(DataType::FLOAT3),
+        }));
+        _vertex_array->add_vertex_buffer(_vertex_buffer);
 
-        glGenBuffers(1, &_vertex_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, _vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        
-        glGenVertexArrays(1, &_vertex_array);
-        glBindVertexArray(_vertex_array);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                              sizeof(Vertex), (void*) offsetof(Vertex, position));
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(Vertex), (void*) offsetof(Vertex, color));
+        _vertex_array->bind();
+        _index_buffer->bind();
+
         BA_INFO("Demo layer attached");
     }
 
     virtual void detach() override {
-        glDeleteVertexArrays(1, &_vertex_array);
-        glDeleteBuffers(1, &_vertex_buffer);
+        delete _index_buffer;
+        delete _vertex_buffer;
+        delete _vertex_array;
         delete _program;
         BA_INFO("Demo layer detached");
     }
-    
+
     virtual void update() override {
         auto window = App::get()->get_window();
         RenderCommand::set_viewport(window->get_width(), window->get_height());
         RenderCommand::clear();
         _program->bind();
-        glBindVertexArray(_vertex_array);
-        glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices));
+        RenderCommand::draw_indexed(sizeof(indices));
     }
 
     virtual bool handle_event(Event& event) override {

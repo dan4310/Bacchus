@@ -2,6 +2,7 @@
 
 #include "bacchus/renderer/renderer.hpp"
 #include "bacchus/renderer/renderer_api.hpp"
+#include "bacchus/renderer/vertex_array.hpp"
 
 namespace bacchus {
     struct RenderCommand {
@@ -12,5 +13,6 @@ namespace bacchus {
         static inline void clear() { _API->clear(); }
         static inline void set_clear_color(glm::vec4& color) { _API->set_clear_color(color); }
         static inline void set_viewport(uint32_t width, uint32_t height) { _API->set_viewport(width, height); }
+        static inline void draw_indexed(uint32_t count) { _API->draw_indexed(count); }
     };
 }

@@ -13,10 +13,12 @@ _deps
 *.o
 *.a
 *.so
+*.so.*
 
 test/*
 !test/*.[c|h]
 !test/*.[c|h]pp
+!test/CMakeLists.txt
 
 .clangd
 bin

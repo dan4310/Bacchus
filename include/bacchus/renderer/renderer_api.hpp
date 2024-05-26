@@ -16,5 +16,6 @@ namespace bacchus {
         virtual void clear() const = 0;
         virtual void set_clear_color(glm::vec4& color) = 0;
         virtual void set_viewport(uint32_t width, uint32_t height) = 0;
+        virtual void draw_indexed(uint32_t count) const = 0;
     };
 }
